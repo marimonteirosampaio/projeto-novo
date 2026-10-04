@@ -24,69 +24,44 @@ conceito, simulador, desafio, referencias = st.tabs([
 
 with conceito:
     st.header("O que é o valor do dinheiro no tempo?")
-
     st.write(
         "Uma quantia disponível hoje pode ser investida e gerar "
-        "rendimentos ao longo do tempo. Para comparar valores em "
-        "datas diferentes, precisamos considerar a taxa de juros e o prazo."
+        "rendimentos ao longo do tempo."
     )
-
     st.subheader("A fórmula dos juros compostos")
-
     st.latex(r"M = C \times (1+i)^t")
-
-    st.write("M = montante; C = capital inicial; i = taxa por período; t = prazo.")
+    st.write("M = montante; C = capital; i = taxa por período; t = prazo.")
 
 with simulador:
     st.header("Simule seu investimento")
-
     capital = st.number_input(
-        "Valor inicial (R$)",
-        min_value=0.01,
-        value=1000.0,
-        step=100.0
+        "Valor inicial (R$)", min_value=0.01,
+        value=1000.0, step=100.0
     )
-
     taxa = st.number_input(
-        "Taxa de juros ao mês (%)",
-        min_value=0.0,
-        max_value=100.0,
-        value=1.0,
-        step=0.5
+        "Taxa mensal (%)", min_value=0.0,
+        max_value=100.0, value=1.0, step=0.5
     )
-
     tempo = st.number_input(
-        "Prazo em meses",
-        min_value=1,
-        max_value=600,
-        value=12,
-        step=1
+        "Prazo em meses", min_value=1,
+        max_value=600, value=12, step=1
     )
 
     if st.button("Calcular montante"):
-        taxa_decimal = taxa / 100
-        montante = capital * (1 + taxa_decimal) ** tempo
+        montante = capital * (1 + taxa / 100) ** tempo
         juros = montante - capital
-
         st.metric("Montante final", f"R$ {montante:,.2f}")
         st.metric("Juros acumulados", f"R$ {juros:,.2f}")
 
-        historico = []
-
-        for mes in range(tempo + 1):
-            saldo = capital * (1 + taxa_decimal) ** mes
-            historico.append(saldo)
-
-        st.subheader("Crescimento do dinheiro")
+        historico = [
+            capital * (1 + taxa / 100) ** mes
+            for mes in range(tempo + 1)
+        ]
         st.line_chart(historico)
 
 with desafio:
     st.header("Desafio rápido")
-
-    st.write(
-        "R$ 1.000 aplicados a 1% ao mês terão qual saldo após um mês?"
-    )
-
+    st.write("R$ 1.000 aplicados a 1% ao mês terão qual saldo após um mês?")
     resposta = st.radio(
         "Escolha uma alternativa:",
         ["R$ 1.000,00", "R$ 1.010,00", "R$ 1.100,00"],
@@ -95,24 +70,22 @@ with desafio:
 
     if st.button("Conferir resposta"):
         if resposta == "R$ 1.010,00":
-            st.success("Correto! R$ 1.000 × 1,01 = R$ 1.010.")
+            st.success("Correto! R$ 1.000 × 1,01 = R$ 1.010,00.")
         elif resposta is None:
-            st.warning("Escolha uma alternativa primeiro.")
+            st.warning("Selecione uma alternativa.")
         else:
-            st.error("Não é essa. Lembre-se de multiplicar o capital por 1,01.")
+            st.error("Não é essa. Tente novamente.")
 
 with referencias:
     st.header("Referência bibliográfica")
-
     st.write(
         "BERK, J.; DEMARZO, P.; HARFORD, J. "
         "Fundamentos de finanças empresariais. "
         "Porto Alegre: Bookman, 2010."
     )
-
     st.info(
-        "Simulação educativa: não considera impostos, tarifas ou "
-        "variações reais de rentabilidade."
+        "Simulação educativa, sem impostos, tarifas ou variações reais "
+        "de rentabilidade."
     )
 
 st.divider()
